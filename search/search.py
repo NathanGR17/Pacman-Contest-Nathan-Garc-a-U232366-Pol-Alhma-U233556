@@ -132,20 +132,87 @@ def depth_first_search(problem):
     print("Is the start a goal?", problem.is_goal_state(problem.get_start_state()))
     print("Start's successors:", problem.get_successors(problem.get_start_state()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    # Keep each node's parent and incoming action so the final route can be rebuilt.
+    start_node = SearchNode(None, (problem.get_start_state(), None, 0))
+    fringe = util.Stack()
+    fringe.push(start_node)
+    explored = set()
+
+    while not fringe.is_empty():
+        node = fringe.pop()
+        # Skip duplicate paths so each state is expanded at most once.
+        if node.state in explored:
+            continue
+
+        explored.add(node.state)
+        if problem.is_goal_state(node.state):
+            return node.get_path()
+
+        # Push successors in the problem's order; the stack explores the last first.
+        for successor, action, step_cost in problem.get_successors(node.state):
+            if successor not in explored:
+                fringe.push(SearchNode(node, (successor, action, step_cost)))
+
+    # An empty stack means no route to a goal exists.
+    return []
 
 
 
 def breadth_first_search(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    start_node = SearchNode(None, (problem.get_start_state(), None, 0))
+    fringe = util.Queue()
+    fringe.push(start_node)
+    explored = set()
+
+    while not fringe.is_empty():
+        node = fringe.pop()
+        # Ignore duplicate paths so each state is expanded at most once.
+        if node.state in explored:
+            continue
+
+        explored.add(node.state)
+        if problem.is_goal_state(node.state):
+            return node.get_path()
+
+        # FIFO ordering ensures all shallower states are processed first.
+        for successor, action, step_cost in problem.get_successors(node.state):
+            if successor not in explored:
+                fringe.push(SearchNode(node, (successor, action, step_cost)))
+
+    # An empty queue means no route to a goal exists.
+    return []
 
 def uniform_cost_search(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    start_node = SearchNode(None, (problem.get_start_state(), None, 0))
+    fringe = util.PriorityQueue()
+    fringe.push(start_node, start_node.cost)
+    best_cost = {start_node.state: start_node.cost}
+    explored = set()
+
+    while not fringe.is_empty():
+        node = fringe.pop()
+        # Ignore outdated paths and states that have already been expanded.
+        if node.cost != best_cost[node.state] or node.state in explored:
+            continue
+
+        explored.add(node.state)
+        if problem.is_goal_state(node.state):
+            return node.get_path()
+
+        # Keep only a cheaper route to each state; priorities use total path cost.
+        for successor, action, step_cost in problem.get_successors(node.state):
+            if successor in explored:
+                continue
+
+            successor_node = SearchNode(node, (successor, action, step_cost))
+            if successor_node.cost < best_cost.get(successor, float('inf')):
+                best_cost[successor] = successor_node.cost
+                fringe.push(successor_node, successor_node.cost)
+
+    # An empty priority queue means no route to a goal exists.
+    return []
 
 def null_heuristic(state, problem=None):
     """
