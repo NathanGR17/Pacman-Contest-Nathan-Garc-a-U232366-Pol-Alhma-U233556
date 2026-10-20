@@ -109,6 +109,8 @@ Your code should quickly find a solution for:
 
 The Pacman board will show an overlay of the states explored, and the order in which they were explored (brighter red means earlier exploration). Is the exploration order what you would have expected? Does Pacman actually go to all the explored squares on his way to the goal?
 
+Yes, it is what I expected. No, he doesn't, he only goes to the final route to the final goal, all the other squares that have red but they are not being used to the final route are only part of the intern search of the final route.
+
 _Hint_: If you use a `Stack` as your data structure, the solution found by your `DFS` algorithm for `mediumMaze` should have a length of 130 (provided you push successors onto the fringe in the order provided by `get_successors`; you might get 246 if you push them in the reverse order). Is this a least cost solution? If not, think about what depth-first search is doing wrong.
 
 ### Question 2 (3 points): Breadth First Search
