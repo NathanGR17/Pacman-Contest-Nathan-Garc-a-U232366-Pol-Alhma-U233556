@@ -223,8 +223,61 @@ def null_heuristic(state, problem=None):
 
 def a_star_search(problem, heuristic=null_heuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raise_not_defined()
+    start_node = SearchNode(None, (problem.get_start_state(), None, 0))
+    fringe = util.PriorityQueue() # We obtain a priority queue to store the nodes to be expanded
+                                  # Ordered by smallest f(n)
+
+    # f(n) = g(n) + h(n)
+    start_priority = start_node.cost + heuristic(start_node.state, problem)
+    fringe.push(start_node, start_priority)
+
+    best_cost = {start_node.state: start_node.cost} # Dictionary with best cost to reach each state
+    explored = set() # States that have already been expanded
+
+    while not fringe.is_empty():
+        node = fringe.pop()
+
+        #Ignore outdated paths or states that have already been expanded.
+        if node.cost != best_cost[node.state] or node.state in explored:
+            continue
+
+        explored.add(node.state)
+        
+        # If current node is goal state, return the path to reach it
+        if problem.is_goal_state(node.state): 
+            return node.get_path()
+
+        # Check all successors of the current node and add them to the fringe if they haven't been explored yet
+        for successor, action, step_cost in problem.get_successors(node.state):
+            if successor in explored:
+                continue
+
+            successor_node = SearchNode(node, (successor, action, step_cost))
+
+            # If the cost to reach the successor is less than the best cost found so far
+            # Update the best cost and add the successor to the fringe with its priority based on f(n) = g(n) + h(n)
+            if successor_node.cost < best_cost.get(successor, float('inf')):
+                best_cost[successor] = successor_node.cost
+                priority = successor_node.cost + heuristic(successor, problem)
+                fringe.push(successor_node, priority)
+
+    return []
+
+    """
+Answer to the question about openMaze:
+DFS: Explores blindly and deeply in a single direction until it hits the boundaries of the 
+map, resulting in an excessively long and inefficient path.
+  
+BFS and UCS guarantee finding the optimal path, but they expand nodes in concentric waves, 
+covering nearly the entire map. Lacking any guidance toward the goal, they explore in all 
+directions equally.
+  
+A*(with Manhattan heuristic): Finds the optimal path while expanding significantly fewer 
+nodes. Instead of expanding in a circle, the search proceeds directly—in a straight or 
+diagonal line—toward the food, guided by a heuristic.
+
+    """
+
 
 # Abbreviations
 bfs = breadth_first_search
