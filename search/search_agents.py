@@ -531,8 +531,25 @@ def food_heuristic(state, problem):
     problem.heuristic_info['wallCount']
     """
     position, food_grid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    food_list = food_grid.as_list() # List of food coordinates
+
+    # No food left, heuristic is 0
+    if len(food_list) == 0:
+        return 0
+
+    # Calculate the maximum Manhattan distance from Pacman's position to any food 
+    max_pacman_to_food = max(util.manhattan_distance(position, food) for food in food_list)
+
+    # Calculate the maximum Manhattan distance between any two food 
+    max_food_to_food = 0 
+    for i in range(len(food_list)):     # Compare distances between all pairs of food dots
+        for j in range(i + 1, len(food_list)):
+            dist = util.manhattan_distance(food_list[i], food_list[j])
+            if dist > max_food_to_food: 
+                max_food_to_food = dist
+
+    # Return the maximum of the two distances as the heuristic value
+    return max(max_pacman_to_food, max_food_to_food)
 
 
 def simplified_corners_heuristic(state, problem):
