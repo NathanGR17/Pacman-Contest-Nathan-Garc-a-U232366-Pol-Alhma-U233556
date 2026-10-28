@@ -155,7 +155,7 @@ def depth_first_search(problem):
 
     # An empty stack means no route to a goal exists.
     return []
-
+#Yes, it is what I expected. No, it doesn't, he only goes to the final route to the final goal, all the other squares that have red but they are not being used to the final route are only part of the intern search of the final route.
 
 
 def breadth_first_search(problem):
