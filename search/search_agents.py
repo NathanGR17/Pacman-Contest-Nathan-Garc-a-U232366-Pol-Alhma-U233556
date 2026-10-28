@@ -533,7 +533,7 @@ def food_heuristic(state, problem):
     position, food_grid = state
     food_list = food_grid.as_list() # List of food coordinates
 
-    # No food left, heuristic is 0
+    # No food left, cost is 0
     if len(food_list) == 0:
         return 0
 

@@ -155,7 +155,10 @@ def depth_first_search(problem):
 
     # An empty stack means no route to a goal exists.
     return []
-#Yes, it is what I expected. No, it doesn't, he only goes to the final route to the final goal, all the other squares that have red but they are not being used to the final route are only part of the intern search of the final route.
+
+#Yes, it is what I expected. No, it doesn't, he only goes to the final route to the final goal, 
+#all the other squares that have red but they are not being used to the final route are only part 
+#of the intern search of the final route.
 
 
 def breadth_first_search(problem):
@@ -211,7 +214,7 @@ def uniform_cost_search(problem):
                 best_cost[successor] = successor_node.cost
                 fringe.push(successor_node, successor_node.cost)
 
-    # An empty priority queue means no route to a goal exists.
+    # Empty priority queue means no route to a goal exists.
     return []
 
 def null_heuristic(state, problem=None):
@@ -263,20 +266,19 @@ def a_star_search(problem, heuristic=null_heuristic):
 
     return []
 
-    """
-Answer to the question about openMaze:
-DFS: Explores blindly and deeply in a single direction until it hits the boundaries of the 
-map, resulting in an excessively long and inefficient path.
-  
-BFS and UCS guarantee finding the optimal path, but they expand nodes in concentric waves, 
-covering nearly the entire map. Lacking any guidance toward the goal, they explore in all 
-directions equally.
-  
-A*(with Manhattan heuristic): Finds the optimal path while expanding significantly fewer 
-nodes. Instead of expanding in a circle, the search proceeds directly—in a straight or 
-diagonal line—toward the food, guided by a heuristic.
 
-    """
+#Answer to the question about openMaze:
+#DFS: Explores blindly and deeply in a single direction until it hits the boundaries of the 
+#map, resulting in an excessively long and inefficient path.
+  
+#BFS and UCS guarantee finding the optimal path, but they expand nodes in concentric waves, 
+#covering nearly the entire map. Lacking any guidance toward the goal, they explore in all 
+#directions equally.
+  
+#A*(with Manhattan heuristic): Finds the optimal path while expanding significantly fewer 
+#nodes. Instead of expanding in a circle, the search proceeds in a straight or 
+#diagonal line toward the food, guided by a heuristic.
+
 
 
 # Abbreviations
