@@ -149,7 +149,72 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluation_function
         """
         "*** YOUR CODE HERE ***"
-        util.raise_not_defined()
+        num_agents = game_state.get_num_agents()
+
+        def alpha_beta(state, agent_index, depth, alpha, beta):
+            # Depth counts complete rounds: Pacman and then every ghost.
+            if state.is_win() or state.is_lose() or depth == self.depth:
+                return self.evaluation_function(state)
+
+            legal_actions = state.get_legal_actions(agent_index)
+            if not legal_actions:
+                return self.evaluation_function(state)
+
+            if agent_index == 0:
+                # Pacman chooses the action with the highest value.
+                value = float("-inf")
+                for action in legal_actions:
+                    successor = state.generate_successor(agent_index, action)
+                    next_agent = 1 if num_agents > 1 else 0
+                    # With no ghosts, Pacman's next move starts a new round.
+                    next_depth = depth if num_agents > 1 else depth + 1
+                    value = max(
+                        value,
+                        alpha_beta(successor, next_agent, next_depth, alpha, beta)
+                    )
+                    alpha = max(alpha, value)
+                    # Strict comparison is required: equality must not prune.
+                    if value > beta:
+                        break
+                return value
+
+            # Each ghost is a minimizing agent, so ghosts share the same logic.
+            value = float("inf")
+            for action in legal_actions:
+                successor = state.generate_successor(agent_index, action)
+                next_agent = agent_index + 1
+                next_depth = depth
+                if next_agent == num_agents:
+                    # The last ghost ends the round; the next turn is Pacman's.
+                    next_agent = 0
+                    next_depth += 1
+                value = min(
+                    value,
+                    alpha_beta(successor, next_agent, next_depth, alpha, beta)
+                )
+                beta = min(beta, value)
+                # Strict comparison is required: equality must not prune.
+                if value < alpha:
+                    break
+            return value
+
+        # Search each root action in order; keep the first action in a tie.
+        best_action = None
+        best_value = float("-inf")
+        alpha = float("-inf")
+        beta = float("inf")
+
+        for action in game_state.get_legal_actions(0):
+            successor = game_state.generate_successor(0, action)
+            next_agent = 1 if num_agents > 1 else 0
+            next_depth = 0 if num_agents > 1 else 1
+            value = alpha_beta(successor, next_agent, next_depth, alpha, beta)
+            if value > best_value:
+                best_value = value
+                best_action = action
+            alpha = max(alpha, best_value)
+
+        return best_action
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
