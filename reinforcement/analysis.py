@@ -65,10 +65,8 @@ def question3e():
     # If not possible, return 'NOT POSSIBLE'
 
 def question8():
-    answer_epsilon = None
-    answer_learning_rate = None
-    return answer_epsilon, answer_learning_rate
-    # If not possible, return 'NOT POSSIBLE'
+    # No parameter pair meets the required confidence regardless of tie-breaking.
+    return 'NOT POSSIBLE'
 
 if __name__ == '__main__':
     print('Answers to analysis questions:')

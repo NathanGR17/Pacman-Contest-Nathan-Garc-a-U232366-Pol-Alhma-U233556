@@ -175,7 +175,22 @@ class AsynchronousValueIterationAgent(ValueIterationAgent):
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
     def run_value_iteration(self):
-        """*** YOUR CODE HERE ***"""
+        states = self.mdp.get_states()
+        if not states:
+            return
+
+        for iteration in range(self.iterations):
+            # Update one state in place on each iteration.
+            state = states[iteration % len(states)]
+            if self.mdp.is_terminal(state):
+                continue
+
+            actions = self.mdp.get_possible_actions(state)
+            if actions:
+                self.values[state] = max(
+                    self.compute_q_value_from_values(state, action)
+                    for action in actions
+                )
 
 class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
     """
@@ -195,5 +210,54 @@ class PrioritizedSweepingValueIterationAgent(AsynchronousValueIterationAgent):
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
 
     def run_value_iteration(self):
-        """*** YOUR CODE HERE ***"""
+        predecessors = {state: set() for state in self.mdp.get_states()}
 
+        for state in self.mdp.get_states():
+            for action in self.mdp.get_possible_actions(state) or []:
+                for next_state, probability in self.mdp.get_transition_states_and_probs(state, action):
+                    if probability > 0:
+                        predecessors[next_state].add(state)
+
+        priority_queue = util.PriorityQueue()
+        for state in self.mdp.get_states():
+            if self.mdp.is_terminal(state):
+                continue
+            actions = self.mdp.get_possible_actions(state)
+            if not actions:
+                continue
+
+            best_q_value = max(
+                self.compute_q_value_from_values(state, action)
+                for action in actions
+            )
+            difference = abs(self.values[state] - best_q_value)
+            if difference > self.theta:
+                priority_queue.push(state, -difference)
+
+        for _ in range(self.iterations):
+            if priority_queue.is_empty():
+                break
+
+            state = priority_queue.pop()
+            actions = self.mdp.get_possible_actions(state)
+            if actions:
+                self.values[state] = max(
+                    self.compute_q_value_from_values(state, action)
+                    for action in actions
+                )
+
+            # Keep tie updates deterministic across runs.
+            for predecessor in sorted(predecessors[state]):
+                if self.mdp.is_terminal(predecessor):
+                    continue
+                predecessor_actions = self.mdp.get_possible_actions(predecessor)
+                if not predecessor_actions:
+                    continue
+
+                best_q_value = max(
+                    self.compute_q_value_from_values(predecessor, action)
+                    for action in predecessor_actions
+                )
+                difference = abs(self.values[predecessor] - best_q_value)
+                if difference > self.theta:
+                    priority_queue.update(predecessor, -difference)
