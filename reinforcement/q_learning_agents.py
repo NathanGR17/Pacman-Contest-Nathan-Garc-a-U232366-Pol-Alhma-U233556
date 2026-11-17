@@ -52,8 +52,8 @@ class QLearningAgent(ReinforcementAgent):
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-        # Returns the stored Q(s,a); 
-        # 0.0 if never seen (Counter default).
+        # Returns the stored Q(s,a) 
+        # 0.0 if never seen 
         return self.q_values[(state, action)]
 
     def compute_value_from_q_values(self, state):
@@ -103,13 +103,11 @@ class QLearningAgent(ReinforcementAgent):
         legal_actions = self.get_legal_actions(state)
         action = None
 
-        # No legal actions (terminal state), return None
         if not legal_actions:
             return None
 
         # explore with probability epsilon, otherwise exploit the best known action
         if util.flip_coin(self.epsilon):
-            # Randomly choose an action from the legal actions
             action = random.choice(legal_actions)
         else:
             # best action based on Q-values
@@ -127,7 +125,7 @@ class QLearningAgent(ReinforcementAgent):
           NOTE: You should never call this function,
           it will be called on your behalf
         """
-        # Sample = what we just observed: immediate reward plus the discounted
+        # Sample = immediate reward plus the discounted
         sample = reward + self.discount * self.compute_value_from_q_values(next_state)
 
         # Update the Q-value for the (state, action) pair using the learning rate
