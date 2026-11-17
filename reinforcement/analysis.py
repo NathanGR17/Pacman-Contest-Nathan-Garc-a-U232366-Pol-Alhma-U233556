@@ -65,7 +65,16 @@ def question3e():
     # If not possible, return 'NOT POSSIBLE'
 
 def question8():
-    # No parameter pair meets the required confidence regardless of tie-breaking.
+    # No parameter pair meets the required confidence regardless of tie-breaking or rotated grid. 
+    # to learn optimal policy the agent has to reach the +10 exit at least once.
+    # A Q-learner only learns from rewards it has experienced.
+    
+    # With high epsilon moves randomly and requires many consecutive correct moves very unlikely
+    # falls off the bridge before crossing it.
+
+    # with low epsilon agent exploits what it already knows going to +1 exit and never explores the bridge. 
+
+    # learning rate only controls how much the agent learns from each experience, but +10 never experienced.
     return 'NOT POSSIBLE'
 
 if __name__ == '__main__':
